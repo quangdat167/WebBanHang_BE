@@ -1,5 +1,6 @@
-.card-course-item {
-  margin-top: 16px; }
+* {
+  margin: 0;
+  padding: 0; }
 
 .user-avatar {
   width: 28px;
@@ -8,6 +9,9 @@
   margin-right: 4px; }
 
 a {
-  text-decoration: none; }
-  a i {
-    color: black; }
+  text-decoration: none;
+  color: black; }
+
+.card-img-top {
+  width: 160px;
+  margin-top: 10px; }

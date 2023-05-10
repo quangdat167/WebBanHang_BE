@@ -6,9 +6,18 @@ const path = require('path');
 const app = express();
 const port = 3000;
 
-app.get('/', (req, res) => {
-    res.render('home');
-});
+const route = require('./routes');
+
+const db = require('./config/db');
+// Connnect to database
+db.connect();
+
+app.use(
+    express.urlencoded({
+        extended: true,
+    }),
+);
+app.use(express.json());
 
 //HTTP logger
 app.use(morgan('dev'));
@@ -21,6 +30,9 @@ app.set('views', path.join(__dirname, 'resources', 'views'));
 // Static file path
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Route init
+route(app);
+
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`Example app listening on port localhost:${port}`);
 });

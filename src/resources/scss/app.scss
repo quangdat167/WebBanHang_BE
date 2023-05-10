@@ -1,7 +1,8 @@
 @import 'variables';
 
-.card-course-item {
-    margin-top: 16px;
+* {
+    margin: 0;
+    padding: 0;
 }
 
 .user-avatar {
@@ -13,8 +14,10 @@
 
 a {
     text-decoration: none;
+    color: black;
+}
 
-    i {
-        color: black;
-    }
+.card-img-top {
+    width: 160px;
+    margin-top: 10px;
 }
