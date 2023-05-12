@@ -1,8 +1,9 @@
-<div class='mt-4 container'>
-    <div class='row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-2'>
+<div class='mt-4'>
+    <div class='row row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-2'>
         {{#each phones}}
             <div class='col' style='min-width: 170px; max-width: 260px; width: calc(25vw-5px)'>
                 <div class='card h-100 shadow rounded-4'>
+                    {{! IMG }}
                     <div class='text-center'>
                         <a href='/phones/{{this.slug}}'>
                             <img
@@ -12,8 +13,9 @@
                             />
                         </a>
                     </div>
+                    {{! Body }}
                     <a href='/phones/{{this.slug}}'>
-                        <div class='card-body'>
+                        <div class='card-body' style='min-height: 270px;'>
                             <h1
                                 class='card-title fs-6 fw-bold'
                                 style='height: 65px; color: #444'
@@ -22,11 +24,6 @@
 
                             <div class='mt-1 d-flex flex-row'>
                                 {{#each this.specifications}}
-                                    {{!-- <p
-                                        class='py-1 px-2 me-2 border border-dark-subtle rounded-3'
-                                        style='font-size: 12px;'
-                                    >{{this}}
-                                    </p> --}}
                                     <span
                                         class='me-2 badge rounded text-bg-light fw-normal border border-dark-subtle'
                                     >{{this}}</span>
@@ -38,12 +35,13 @@
                             >{{this.price_display}}
                             </p>
                             <p
-                                class='p-1 bg-body-secondary bg-opacity-75 border border-light-subtle rounded-2'
+                                class='p-1 bg-body-secondary border border-secondary-subtle rounded-2'
                                 style='font-size: 14px;'
                             >{{this.promotion}}
                             </p>
                         </div>
                     </a>
+                    {{! Foot }}
                     <div class='card-footer text-center'>
 
                         <a href='/phones/{{this.slug}}/edit' class='btn btn-primary w-75'>Chỉnh sửa</a>
@@ -54,45 +52,4 @@
 
     </div>
 
-    {{! <div class='row'> }}
-    {{!-- {{#each phones}} --}}
-    {{!-- <div class='col-sm-6 col-lg-4'>
-                <div class='card card-course-item'>
-                    <a href='/phones/{{this.slug}}'>
-                        <img src={{this.images.url}} class='card-img-top' alt={{this.name}} />
-                    </a>
-                    <div class='card-body'>
-                        <a href='/phones/{{this.slug}}'>
-                            <h5 cl ass='card-title'>{{this.name}}</h5>
-                        </a>
-
-                        <p class='card-text' style='min-height: 100px'>{{this.description}}</p>
-
-                        <p class='card-text'>{{this.price_display}}</p>
-                        <a href='#' class='btn btn-primary'>Mua khóa học</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class='card' style='width: 18rem;'>
-                <img src='...' class='card-img-top' alt='...' />
-                <div class='card-body'>
-                    <h5 class='card-title'>{{this.name}}</h5>
-                    {{!-- 
-                    {{#each this.images}}
-                        {{#with this}}
-                            {{type}}
-                            <img src={{url}} class='card-img-top' alt={{url}} />
-                        {{/with}}
-
-                    {{/each}} --}}
-
-    {{!-- {{#each this.specifications}}
-                        <p class='card-text'>{{this}}</p>
-                    {{/each}}
-                    <a href='#' class='btn btn-primary'>Go somewhere</a>
-                </div>
-            </div>
-        {{/each}} --}}
-    {{! </div> }}
 </div>

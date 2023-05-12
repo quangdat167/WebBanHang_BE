@@ -21,3 +21,31 @@ a {
     width: 160px;
     margin-top: 10px;
 }
+
+.fw-700 {
+    font-weight: 700;
+}
+
+.fs-12 {
+    font-size: 0.75rem;
+}
+
+.container-1200 {
+    max-width: 1200px;
+}
+
+// Carousel in show.hbs
+.carousel-image {
+    margin-top: 1rem;
+    display: inline-block;
+    white-space: nowrap;
+}
+.image-swipe {
+    height: 3rem;
+    width: 3rem;
+    box-sizing: content-box;
+    margin-right: 3px;
+    margin-left: 3px;
+    cursor: pointer;
+    transition: opacity 0.6s ease;
+}

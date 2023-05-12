@@ -15,6 +15,7 @@ const Phone = new Schema(
         images: Array,
         image_title: String,
         promotion: String,
+        colors: Array,
         slug: { type: String, slug: 'name', unique: true },
     },
     {
