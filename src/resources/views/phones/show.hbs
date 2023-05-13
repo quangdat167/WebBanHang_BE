@@ -14,19 +14,18 @@
                 <div class='carousel-inner'>
                     <div class='carousel-item active' data-bs-interval='3000'>
                         <img
-                            src='{{phone.image_title}}'
+                            src='{{firstImage}}'
                             class='d-block w-50 mx-auto'
-                            alt='{{phone.image_title}}'
+                            alt='{{firstImage}}'
                         />
                         {{! <div class='carousel-caption d-none d-md-block'>
                             <h5>First slide label</h5>
                             <p>Some representative placeholder content for the first slide.</p>
                         </div> }}
                     </div>
-                    {{#each phone.images}}
+                    {{#each (deleteFirstItem phone.images)}}
                         <div class='carousel-item' data-bs-interval='3000'>
                             <img src='{{this}}' class='d-block w-50 mx-auto' alt='{{this}}' />
-
                         </div>
                     {{/each}}
                 </div>
@@ -51,9 +50,10 @@
 
             </div>
             <div class='carousel-image w-100 overflow-x-auto mb-4'>
+                {{! prettier-ignore }}
                 <img
-                    src='{{phone.image_title}}'
-                    alt='{{phone.image_title}}'
+                    src='{{firstImage}}'
+                    alt='{{firstImage}}'
                     data-bs-target='#carouselExampleIndicators'
                     data-bs-slide-to='0'
                     class='active image-swipe border rounded-3'
@@ -71,12 +71,12 @@
                     />
                 {{/each}}
             </div>
-
-            <div class='description pt-2 bg-body-secondary bg-opacity-75 border rounded-3'>
+            {{! Đặc điểm nổi bật }}
+            <div class='description pt-2 mb-2 bg-body-secondary bg-opacity-75 border rounded-3'>
                 <h5 class='text-center text-danger fw-bold'>ĐẶC ĐIỂM NỔI BẬT</h5>
                 <ul class=''>
                     {{#each phone.description}}
-                        <li class=''>{{this}}</li>
+                        <li class='fw-normal'>{{this}}</li>
                     {{/each}}
                 </ul>
             </div>
@@ -85,7 +85,14 @@
 
         {{! Cột bên phải }}
         <div class='col-md-7 col-lg-5 h-100'>
-            <p class='card-text text-danger fs-5 fw-bold'>{{phone.price_display}}
+            <p class='card-text text-danger fs-5 fw-bold'>
+                {{#each phone.prices}}
+                    {{#if @last}}
+                        {{#with this}}
+                            {{price}}
+                        {{/with}}
+                    {{/if}}
+                {{/each}}
             </p>
 
             {{! Khung chọn loại bộ nhớ }}
@@ -112,11 +119,11 @@
                     {{#with this}}
                         <button
                             type='button'
-                            class='px-4 py-2 mb-2 me-2 btn btn-outline-light border border-dark-subtle'
+                            class='px-1 py-2 mb-2 me-2 btn btn-outline-light border border-dark-subtle'
                             style='width: calc(33.33333% - 0.7rem); --bs-btn-color: black; '
                         >
                             <img src='{{img}}' alt='{{color}}' style='width: 2rem;' />
-                            <span class='fw-semibold small'> {{color}}</span>
+                            <span class='fw-semibold fs-12'>{{color}}</span>
 
                         </button>
                     {{/with}}
@@ -135,7 +142,7 @@
             {{! Button edit }}
             <div class='mt-4 text-center'>
 
-                <a href='/phones/{{phone.slug}}/edit' class='py-3 fs-4 btn btn-primary w-100'>Chỉnh
+                <a href='/phones/{{phone._id}}/edit' class='py-3 fs-4 btn btn-primary w-100'>Chỉnh
                     sửa</a>
             </div>
 
