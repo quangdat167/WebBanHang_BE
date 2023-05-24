@@ -1,5 +1,5 @@
 const Phone = require('../models/Phones');
-const { monggoseToObject } = require('../../util/monggoose');
+const { monggoseToObject, multipleMongooseToObject } = require('../../util/monggoose');
 // const ConfigPhoneBeforeSave = require('../../public/js/ConfigPhoneBeforeSave');
 const formatBodyPhone = require('../middleware/formatBodyPhone');
 
@@ -28,7 +28,7 @@ class PhoneController {
         phone
             .save()
             .then(() => {
-                res.redirect('/');
+                res.redirect('/phones/list');
             })
             .catch(next);
     }
@@ -48,7 +48,25 @@ class PhoneController {
     update(req, res, next) {
         Phone.updateOne({ _id: req.params.id }, req.body)
             .then(() => {
-                res.redirect('/');
+                res.redirect('/phones/list');
+            })
+            .catch(next);
+    }
+
+    // [GET] /phones/list
+    read(req, res, next) {
+        Phone.find()
+            .then(phones => {
+                res.render('phones/list', { phones: multipleMongooseToObject(phones) });
+            })
+            .catch(next);
+    }
+
+    // [DELETE] /phones/:id
+    delete(req, res, next) {
+        Phone.deleteOne({ _id: req.params.id })
+            .then(() => {
+                res.redirect('/phones/list');
             })
             .catch(next);
     }

@@ -3,8 +3,11 @@ const morgan = require('morgan');
 const { engine } = require('express-handlebars');
 const path = require('path');
 
+// Format Time
+const moment = require('moment');
+
 const app = express();
-const port = 3000;
+const port = 3010;
 
 const route = require('./routes');
 
@@ -69,6 +72,9 @@ app.engine(
                     result += string;
                 }
                 return result;
+            },
+            formatTime: function (time) {
+                return moment(time).format('DD/MM/YYYY HH:mm:ss');
             },
         },
     }),
