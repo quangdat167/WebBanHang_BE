@@ -2,7 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const { engine } = require('express-handlebars');
 const path = require('path');
-
+const cors = require('cors');
 // Format Time
 const moment = require('moment');
 
@@ -84,6 +84,9 @@ app.set('views', path.join(__dirname, 'resources', 'views'));
 
 // Static file path
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Cors
+app.use(cors());
 
 // Route init
 route(app);
