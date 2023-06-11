@@ -1,9 +1,28 @@
 const Phone = require('../models/Phones');
 const { monggoseToObject, multipleMongooseToObject } = require('../../util/monggoose');
 // const ConfigPhoneBeforeSave = require('../../public/js/ConfigPhoneBeforeSave');
-const formatBodyPhone = require('../middleware/formatBodyPhone');
 
 class PhoneController {
+    // Get API
+
+    // [GET] /api/phones
+    getAll(req, res, next) {
+        Phone.find({})
+            .then(phones => {
+                res.json(phones);
+            })
+            .catch(next);
+    }
+
+    // [GET] /api/phones/:slug
+    getBySlug(req, res, next) {
+        Phone.findOne({ slug: req.params.slug })
+            .then(phone => res.json(phone))
+            .catch(next);
+    }
+
+    // Show in backend
+
     // [GET] /phones/create
     create(req, res, next) {
         res.render('phones/create');

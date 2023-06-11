@@ -3,6 +3,10 @@ const morgan = require('morgan');
 const { engine } = require('express-handlebars');
 const path = require('path');
 const cors = require('cors');
+
+// Dotenv
+require('dotenv').config();
+
 // Format Time
 const moment = require('moment');
 
