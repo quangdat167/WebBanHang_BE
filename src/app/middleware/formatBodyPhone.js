@@ -2,6 +2,7 @@ module.exports = function formatBodyPhone(req, res, next) {
     const phone = {};
     phone.name = req.body.name;
     phone.brand = req.body.brand;
+    phone.promotion = req.body.promotion;
     phone.specifications = req.body.specifications.filter(item => item !== '');
     phone.description = req.body.description.filter(item => item !== '');
     const arrayTypes = req.body.types.filter(item => item !== '');
