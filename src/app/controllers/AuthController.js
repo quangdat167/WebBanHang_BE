@@ -1,51 +1,55 @@
-const User = require('../models/User');
-const JWT = require('jsonwebtoken');
-const { JWT_SECRETKEY } = require('../../config/jwt');
-
-// Handle encode token using JWT
-const encodedJWT = userid => {
-    return JWT.sign(
-        {
-            iss: 'Quang Dat',
-            sub: userid,
-            iat: new Date().getTime(),
-            exp: new Date().setDate(new Date().getDate() + 3),
-        },
-        JWT_SECRETKEY,
-    );
-};
+const { UserInfoModel } = require("../models/user.model");
 
 class AuthController {
-    // [POST] /auth/signUp
-    async signUp(req, res, next) {
+    async signUp(req, res) {
         try {
-            const user = new User(req.body);
-            const existingUser = await User.findOne({ username: req.body.username });
-            if (existingUser) return res.status(403).json({ error: 'Người dùng đã tồn tại' });
-            user.save();
-            const token = encodedJWT(user._id);
-            res.setHeader('Authorization', 'Bearer ' + token);
-            return res.status(201).json({ message: 'Đăng ký thành công' });
+            const { email } = req.body;
+
+            const existingUser = await UserInfoModel.findOne({ email });
+
+            if (existingUser) {
+                return res.status(200).json(existingUser);
+            } else {
+                const newUser = await UserInfoModel.create(req.body);
+                newUser.save();
+                return res.status(200).json(newUser);
+            }
         } catch (err) {
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).json({ message: "Internal server error" });
         }
     }
 
-    async signIn(req, res, next) {
+    async getUserInfo(req, res) {
         try {
-            const token = await encodedJWT(req.user._id);
-            res.setHeader('Authorization', 'Bearer ' + token);
-            return res.status(200).json({ message: 'Đăng nhập thành công' });
-        } catch (error) {
-            console.error(error);
+            const { email } = req.body;
+
+            const existingUser = await UserInfoModel.findOne({ email });
+
+            if (existingUser) {
+                return res.status(200).json(existingUser);
+            } else {
+                return res.status(200).json({});
+            }
+        } catch (err) {
+            res.status(500).json({ message: "Internal server error" });
         }
     }
 
-    async secret(req, res, next) {
+    async searchUserByEmail(req, res) {
         try {
-            return res.status(200).json({ message: 'Confirm token' });
-        } catch (error) {
-            console.log(error);
+            const { email } = req.body;
+
+            const users = await UserInfoModel.find({
+                email: { $regex: email, $options: "i" },
+            });
+
+            if (users.length > 0) {
+                return res.status(200).json(users);
+            } else {
+                return res.status(200).json({ message: "No users found" });
+            }
+        } catch (err) {
+            res.status(500).json({ message: "Internal server error" });
         }
     }
 }
