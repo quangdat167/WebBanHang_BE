@@ -1,9 +1,9 @@
-const Phone = require('../models/Phones');
+const { PhoneModel } = require('../models/Phones');
 const { multipleMongooseToObject } = require('../../util/monggoose');
 class SiteController {
     // [GET] /
     index(req, res, next) {
-        Phone.find({})
+        PhoneModel.find({})
             .then(phones => {
                 res.render('home', {
                     phones: multipleMongooseToObject(phones),

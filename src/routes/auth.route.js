@@ -8,5 +8,6 @@ const APIConfig = require("../util/APIConfig");
 router.post(APIConfig.SIGNUP, AuthController.signUp);
 router.post(APIConfig.GET_USER_INFO, AuthController.signUp);
 router.post(APIConfig.SEARCH_USER_EMAIL, AuthController.signUp);
+router.post(APIConfig.UPDATE_USER_INFO, AuthController.updateInfoUser);
 
 module.exports = router;

@@ -52,6 +52,28 @@ class AuthController {
             res.status(500).json({ message: "Internal server error" });
         }
     }
+
+    async updateInfoUser(req, res) {
+        try {
+            const { userId, phone, address } = req.body;
+
+            const user = await UserInfoModel.updateOne(
+                {
+                    _id: userId,
+                },
+                {
+                    $set: {
+                        address,
+                        phone,
+                    },
+                },
+            );
+
+            return res.status(200).json(user);
+        } catch (err) {
+            res.status(500).json({ message: "Internal server error" });
+        }
+    }
 }
 
 module.exports = new AuthController();

@@ -1,4 +1,4 @@
-const Phone = require('../models/Phones');
+const { PhoneModel } = require('../models/Phones');
 const { monggoseToObject, multipleMongooseToObject } = require('../../util/monggoose');
 // const ConfigPhoneBeforeSave = require('../../public/js/ConfigPhoneBeforeSave');
 
@@ -7,7 +7,7 @@ class PhoneController {
 
     // [GET] /api/phones
     getAll(req, res, next) {
-        Phone.find({})
+        PhoneModel.find({})
             .then(phones => {
                 res.json(phones);
             })
@@ -15,10 +15,16 @@ class PhoneController {
     }
 
     // [GET] /api/phones/:slug
-    getBySlug(req, res, next) {
-        Phone.findOne({ slug: req.params.slug })
-            .then(phone => res.json(phone))
-            .catch(next);
+    async getBySlug(req, res) {
+        try {
+            const phone = await PhoneModel.findOne({ slug: req.body.slug });
+            if (phone) {
+                // console.log(phone);
+                res.status(200).json(phone);
+            } else res.status(200).json({ message: 'Invalid phone' });
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     // Show in backend
@@ -31,7 +37,7 @@ class PhoneController {
     // [GET] /phones/:slug
     show(req, res, next) {
         let firstImage;
-        Phone.findOne({ slug: req.params.slug })
+        PhoneModel.findOne({ slug: req.params.slug })
             .then(phone => {
                 res.render('phones/show', {
                     phone: monggoseToObject(phone),
@@ -43,7 +49,7 @@ class PhoneController {
 
     // [POST] /phones/create
     store(req, res, next) {
-        const phone = new Phone(req.body);
+        const phone = new PhoneModel(req.body);
         phone
             .save()
             .then(() => {
@@ -54,7 +60,7 @@ class PhoneController {
 
     // [GET] /phones/:id/edit
     edit(req, res, next) {
-        Phone.findById(req.params.id)
+        PhoneModel.findById(req.params.id)
             .then(phone => {
                 res.render('phones/edit', {
                     phone: monggoseToObject(phone),
@@ -65,7 +71,7 @@ class PhoneController {
 
     // [PUT] /phones/:id
     update(req, res, next) {
-        Phone.updateOne({ _id: req.params.id }, req.body)
+        PhoneModel.updateOne({ _id: req.params.id }, req.body)
             .then(() => {
                 res.redirect('/phones/list');
             })
@@ -74,7 +80,7 @@ class PhoneController {
 
     // [GET] /phones/list
     read(req, res, next) {
-        Phone.find()
+        PhoneModel.find()
             .then(phones => {
                 res.render('phones/list', { phones: multipleMongooseToObject(phones) });
             })
@@ -83,11 +89,31 @@ class PhoneController {
 
     // [DELETE] /phones/:id
     delete(req, res, next) {
-        Phone.deleteOne({ _id: req.params.id })
+        PhoneModel.deleteOne({ _id: req.params.id })
             .then(() => {
                 res.redirect('/phones/list');
             })
             .catch(next);
+    }
+
+    async searchByName(req, res) {
+        try {
+            const { keyword } = req.body;
+            const phones = await PhoneModel.find({ name: new RegExp(keyword, 'i') });
+            res.status(200).json(phones);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    async getRandomPhone(req, res) {
+        try {
+            const { limit } = req.body;
+            const phones = await PhoneModel.aggregate([{ $sample: { size: parseInt(limit) } }]);
+            res.status(200).json(phones);
+        } catch (err) {
+            console.log(err);
+        }
     }
 }
 
