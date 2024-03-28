@@ -13,8 +13,9 @@ const PhoneSchema = new Schema(
         prices: Array,
         specifications: Array,
         images: Array,
-        promotion: String,
+        promotion: { type: Array },
         colors: Array,
+        priority: Number,
         slug: { type: String, slug: "name", unique: true },
     },
     {

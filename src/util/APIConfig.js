@@ -10,6 +10,7 @@ class APIConfig {
     static GET_PHONE_BY_SLUG = "/get-phones-by-slug";
     static SEARCH_PHONE_BY_NAME = "/search-phone-by-name";
     static GET_RANDOM_PHONE = "/get-random-phone";
+    static FILTER_PHONE = "/filter-phone";
 
     // Cart
     static ADD_TO_CART = "/add-to-cart";
