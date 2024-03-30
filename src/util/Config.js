@@ -9,6 +9,11 @@ class Config {
         CANCLE: "Đã hủy",
         SUCCESS: "Hoàn thành",
     };
+    static SORT_BY = {
+        PRICE_DESC: "price_desc",
+        PRICE_ASC: "price_asc",
+        POPULAR: "popular",
+    };
 }
 
 module.exports = Config;

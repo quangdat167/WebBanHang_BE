@@ -1,5 +1,6 @@
 const { PhoneModel } = require("../models/Phones");
 const { monggoseToObject, multipleMongooseToObject } = require("../../util/monggoose");
+const Config = require("../../util/Config");
 // const ConfigPhoneBeforeSave = require('../../public/js/ConfigPhoneBeforeSave');
 
 class PhoneController {
@@ -121,7 +122,7 @@ class PhoneController {
 
     async filterPhone(req, res) {
         try {
-            const { brand, price, type, ram, rom, charging_feature } = req.body;
+            const { brand, price, type, ram, rom, charging_feature, sortby } = req.body;
             const pipeline = [];
 
             if (type && type.length > 0) {
@@ -221,36 +222,55 @@ class PhoneController {
                         },
                     },
                 });
-                pipeline.push({
-                    $match: {
-                        technical_infos: {
-                            $elemMatch: {
-                                name: "Pin & Sạc",
-                                details: {
-                                    $elemMatch: {
-                                        title: "Công nghệ pin",
-                                        infos: {
-                                            $in: charging_feature,
+                if (charging_feature.includes("Sạc không dây")) {
+                    pipeline.push({
+                        $match: {
+                            technical_infos: {
+                                $elemMatch: {
+                                    name: "Pin & Sạc",
+                                    details: {
+                                        $elemMatch: {
+                                            title: "Công nghệ pin",
+                                            infos: {
+                                                $in: charging_feature,
+                                            },
                                         },
                                     },
                                 },
                             },
                         },
-                    },
-                });
+                    });
+                }
             }
 
-            pipeline.push({
-                $sort: {
-                    priority: -1,
-                },
-            });
+            if (sortby === Config.SORT_BY.POPULAR || !sortby) {
+                pipeline.push({
+                    $sort: {
+                        priority: -1,
+                    },
+                });
+            } else if (
+                sortby === Config.SORT_BY.PRICE_DESC ||
+                sortby === Config.SORT_BY.PRICE_ASC
+            ) {
+                pipeline.push({
+                    $addFields: {
+                        min_price: { $min: "$prices.price" }, // Tính giá nhỏ nhất trong mảng prices
+                    },
+                });
+                const sortPrice = {
+                    $sort: {
+                        min_price: sortby === Config.SORT_BY.PRICE_DESC ? -1 : 1, // Sắp xếp giảm dần hoặc tăng dần
+                    },
+                };
+
+                pipeline.push(sortPrice);
+            }
             pipeline.push({ $skip: 0 });
             // pipeline.push({ $limit: 20 });
             const result = await PhoneModel.aggregate(pipeline);
             const totalPhone = result?.length;
 
-            // Trả về kết quả và totalPhone
             res.status(200).json({ phones: result, totalPhone });
         } catch (err) {
             console.log(err);
