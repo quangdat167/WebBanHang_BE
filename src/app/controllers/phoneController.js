@@ -1,4 +1,4 @@
-const { PhoneModel } = require("../models/Phones");
+const { PhoneModel } = require("../models/phone");
 const { monggoseToObject, multipleMongooseToObject } = require("../../util/monggoose");
 const Config = require("../../util/Config");
 // const ConfigPhoneBeforeSave = require('../../public/js/ConfigPhoneBeforeSave');

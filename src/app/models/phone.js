@@ -17,6 +17,8 @@ const PhoneSchema = new Schema(
         colors: Array,
         priority: Number,
         slug: { type: String, slug: "name", unique: true },
+        information: String,
+        technical_infos: Array,
     },
     {
         versionKey: false,

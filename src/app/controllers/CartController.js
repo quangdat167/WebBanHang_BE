@@ -1,4 +1,4 @@
-const { CartModel } = require("../models/cart.model");
+const { CartModel } = require("../models/cart");
 const { mongoose } = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 

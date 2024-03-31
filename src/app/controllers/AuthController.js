@@ -1,4 +1,4 @@
-const { UserInfoModel } = require("../models/user.model");
+const { UserInfoModel } = require("../models/user");
 
 class AuthController {
     async signUp(req, res) {

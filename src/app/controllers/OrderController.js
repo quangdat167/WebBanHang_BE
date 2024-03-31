@@ -1,7 +1,7 @@
 const Config = require("../../util/Config");
-const { CartModel } = require("../models/cart.model");
+const { CartModel } = require("../models/cart");
 const { mongoose } = require("mongoose");
-const { OrderModel } = require("../models/order.model");
+const { OrderModel } = require("../models/order");
 const ObjectId = mongoose.Types.ObjectId;
 
 class OrderController {
