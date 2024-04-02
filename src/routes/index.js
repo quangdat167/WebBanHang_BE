@@ -4,6 +4,7 @@ const phoneRouter = require("./phone.route");
 const authRouter = require("./auth.route");
 const cartRouter = require("./cart.route");
 const orderRouter = require("./order.route");
+const itemsRouter = require("./items.route");
 
 function route(app) {
     app.use("/phones", phonesRouter);
@@ -11,6 +12,7 @@ function route(app) {
     app.use("/api", authRouter);
     app.use("/api", cartRouter);
     app.use("/api", orderRouter);
+    app.use("/api", itemsRouter);
     app.use("/", siteRouter);
 }
 

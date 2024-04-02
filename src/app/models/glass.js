@@ -9,7 +9,7 @@ const GlassSchema = new Schema(
         slug: { type: String, slug: "name", unique: true },
         image: String,
         price: Number,
-        promotion: { type: String },
+        promotion: { type: Array },
         // technical_infos: Array,
         // brand: String,
         // information: String,

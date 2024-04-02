@@ -21,6 +21,13 @@ class APIConfig {
     static CREATE_ORDER = "/create-order";
     static GET_ALL_ORDERS = "/get-all-orders";
     static GET_ALL_ORDERS_APP = "/get-all-orders-app";
+
+    // iTEMS
+    static GET_BACKUP_CHARGE = "/get-backup-charge";
+    static GET_ADAPTER = "/get-adapter";
+    static GET_CAPBLE = "/get-cable";
+    static GET_CASE = "/get-case";
+    static GET_GLASS = "/get-glass";
 }
 
 module.exports = APIConfig;

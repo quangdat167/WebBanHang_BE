@@ -1,107 +1,144 @@
 const { PhoneModel } = require("../models/phone");
 const { monggoseToObject, multipleMongooseToObject } = require("../../util/monggoose");
 const Config = require("../../util/Config");
+const { BackupChargerModel } = require("../models/backupcharger");
+const { AdapterModel } = require("../models/adapter");
+const { CapbleModel } = require("../models/capble");
+const { CaseModel } = require("../models/case");
+const { GlassModel } = require("../models/glass");
 // const ConfigPhoneBeforeSave = require('../../public/js/ConfigPhoneBeforeSave');
 
-class PhoneController {
-    // Get API
-
-    // [GET] /api/phones
-    getAll(req, res, next) {
-        PhoneModel.find({})
-            .sort({ priority: -1 })
-            .then(phones => {
-                res.json(phones);
-            })
-            .catch(next);
-    }
-
-    // [GET] /api/phones/:slug
-    async getBySlug(req, res) {
+class ItemsController {
+    async getBackupCharge(req, res) {
         try {
-            const phone = await PhoneModel.findOne({ slug: req.body.slug });
-            if (phone) {
-                // console.log(phone);
-                res.status(200).json(phone);
-            } else res.status(200).json({ message: "Invalid phone" });
+            const { limit, skip, sortby } = req.body;
+            const pipeline = [];
+            const totalBackupCharges = await BackupChargerModel.countDocuments();
+            if (sortby === Config.SORT_BY.PRICE_DESC || sortby === Config.SORT_BY.PRICE_ASC) {
+                pipeline.push({
+                    $sort: {
+                        price: sortby === Config.SORT_BY.PRICE_ASC ? 1 : -1,
+                    },
+                });
+            }
+            pipeline.push({ $skip: skip });
+            pipeline.push({ $limit: limit });
+            const backupCharges = await BackupChargerModel.aggregate(pipeline);
+
+            res.status(200).json({
+                data: backupCharges,
+                totalRemaining: totalBackupCharges - (skip + backupCharges.length),
+            });
         } catch (err) {
             console.log(err);
         }
     }
 
-    // Show in backend
-
-    // [GET] /phones/create
-    create(req, res, next) {
-        res.render("phones/create");
-    }
-
-    // [GET] /phones/:slug
-    show(req, res, next) {
-        let firstImage;
-        PhoneModel.findOne({ slug: req.params.slug })
-            .then(phone => {
-                res.render("phones/show", {
-                    phone: monggoseToObject(phone),
-                    firstImage: phone.images[0],
+    async getAdapter(req, res) {
+        try {
+            const { limit, skip, sortby } = req.body;
+            const pipeline = [];
+            const totalBackupCharges = await AdapterModel.countDocuments();
+            if (sortby === Config.SORT_BY.PRICE_DESC || sortby === Config.SORT_BY.PRICE_ASC) {
+                pipeline.push({
+                    $sort: {
+                        price: sortby === Config.SORT_BY.PRICE_ASC ? 1 : -1,
+                    },
                 });
-            })
-            .catch(next);
+            }
+            pipeline.push({ $skip: skip });
+            pipeline.push({ $limit: limit });
+            const backupCharges = await AdapterModel.aggregate(pipeline);
+
+            // Trả về kết quả và số lượng còn lại
+            res.status(200).json({
+                data: backupCharges,
+                totalRemaining: totalBackupCharges - (skip + backupCharges.length),
+            });
+        } catch (err) {
+            console.log(err);
+        }
     }
 
-    // [POST] /phones/create
-    store(req, res, next) {
-        const phone = new PhoneModel(req.body);
-        phone
-            .save()
-            .then(() => {
-                res.redirect("/phones/list");
-            })
-            .catch(next);
-    }
-
-    // [GET] /phones/:id/edit
-    edit(req, res, next) {
-        PhoneModel.findById(req.params.id)
-            .then(phone => {
-                res.render("phones/edit", {
-                    phone: monggoseToObject(phone),
+    async getCable(req, res) {
+        try {
+            const { limit, skip, sortby } = req.body;
+            const pipeline = [];
+            const totalBackupCharges = await CapbleModel.countDocuments();
+            if (sortby === Config.SORT_BY.PRICE_DESC || sortby === Config.SORT_BY.PRICE_ASC) {
+                pipeline.push({
+                    $sort: {
+                        price: sortby === Config.SORT_BY.PRICE_ASC ? 1 : -1,
+                    },
                 });
-            })
-            .catch(next);
+            }
+            pipeline.push({ $skip: skip });
+            pipeline.push({ $limit: limit });
+            const backupCharges = await CapbleModel.aggregate(pipeline);
+
+            res.status(200).json({
+                data: backupCharges,
+                totalRemaining: totalBackupCharges - (skip + backupCharges.length),
+            });
+        } catch (err) {
+            console.log(err);
+        }
     }
 
-    // [PUT] /phones/:id
-    update(req, res, next) {
-        PhoneModel.updateOne({ _id: req.params.id }, req.body)
-            .then(() => {
-                res.redirect("/phones/list");
-            })
-            .catch(next);
+    async getCase(req, res) {
+        try {
+            const { limit, skip, sortby } = req.body;
+            const pipeline = [];
+            const totalBackupCharges = await CaseModel.countDocuments();
+            if (sortby === Config.SORT_BY.PRICE_DESC || sortby === Config.SORT_BY.PRICE_ASC) {
+                pipeline.push({
+                    $sort: {
+                        price: sortby === Config.SORT_BY.PRICE_ASC ? 1 : -1,
+                    },
+                });
+            }
+            pipeline.push({ $skip: skip });
+            pipeline.push({ $limit: limit });
+            const backupCharges = await CaseModel.aggregate(pipeline);
+
+            res.status(200).json({
+                data: backupCharges,
+                totalRemaining: totalBackupCharges - (skip + backupCharges.length),
+            });
+        } catch (err) {
+            console.log(err);
+        }
     }
 
-    // [GET] /phones/list
-    read(req, res, next) {
-        PhoneModel.find()
-            .then(phones => {
-                res.render("phones/list", { phones: multipleMongooseToObject(phones) });
-            })
-            .catch(next);
-    }
+    async getGlass(req, res) {
+        try {
+            const { limit, skip, sortby } = req.body;
+            const pipeline = [];
+            const totalBackupCharges = await GlassModel.countDocuments();
+            if (sortby === Config.SORT_BY.PRICE_DESC || sortby === Config.SORT_BY.PRICE_ASC) {
+                pipeline.push({
+                    $sort: {
+                        price: sortby === Config.SORT_BY.PRICE_ASC ? 1 : -1,
+                    },
+                });
+            }
+            pipeline.push({ $skip: skip });
+            pipeline.push({ $limit: limit });
+            const backupCharges = await GlassModel.aggregate(pipeline);
 
-    // [DELETE] /phones/:id
-    delete(req, res, next) {
-        PhoneModel.deleteOne({ _id: req.params.id })
-            .then(() => {
-                res.redirect("/phones/list");
-            })
-            .catch(next);
+            res.status(200).json({
+                data: backupCharges,
+                totalRemaining: totalBackupCharges - (skip + backupCharges.length),
+            });
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     async searchByName(req, res) {
         try {
             const { keyword } = req.body;
-            const phones = await PhoneModel.find({ name: new RegExp(keyword, "i") }).sort({
+            const phones = await BackupChargerModel.find({ name: new RegExp(keyword, "i") }).sort({
                 priority: -1,
             });
             res.status(200).json(phones);
@@ -113,7 +150,9 @@ class PhoneController {
     async getRandomPhone(req, res) {
         try {
             const { limit } = req.body;
-            const phones = await PhoneModel.aggregate([{ $sample: { size: parseInt(limit) } }]);
+            const phones = await BackupChargerModel.aggregate([
+                { $sample: { size: parseInt(limit) } },
+            ]);
             res.status(200).json(phones);
         } catch (err) {
             console.log(err);
@@ -122,9 +161,7 @@ class PhoneController {
 
     async filterPhone(req, res) {
         try {
-            const { brand, price, type, ram, rom, charging_feature, sortby, skip, limit } =
-                req.body;
-            const totalPhones = await PhoneModel.countDocuments();
+            const { brand, price, type, ram, rom, charging_feature, sortby } = req.body;
             const pipeline = [];
 
             if (type && type.length > 0) {
@@ -268,21 +305,16 @@ class PhoneController {
 
                 pipeline.push(sortPrice);
             }
-            const totalPhone = await PhoneModel.aggregate([...pipeline, { $count: "totalPhone" }]);
-            pipeline.push({ $skip: skip });
-            pipeline.push({ $limit: limit });
+            pipeline.push({ $skip: 0 });
+            // pipeline.push({ $limit: 20 });
             const result = await PhoneModel.aggregate(pipeline);
+            const totalPhone = result?.length;
 
-            res.status(200).json({
-                phones: result,
-                totalPhone: totalPhone.length > 0 ? totalPhone[0].totalPhone : 0,
-                totalRemaining:
-                    totalPhone.length > 0 ? totalPhone[0].totalPhone - (skip + result.length) : 0,
-            });
+            res.status(200).json({ phones: result, totalPhone });
         } catch (err) {
             console.log(err);
         }
     }
 }
 
-module.exports = new PhoneController();
+module.exports = new ItemsController();
