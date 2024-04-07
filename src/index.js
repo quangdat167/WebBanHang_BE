@@ -1,14 +1,12 @@
 const express = require("express");
 const morgan = require("morgan");
-const { engine } = require("express-handlebars");
-const path = require("path");
 const cors = require("cors");
 
+const { FPGrowth, Itemset } = require("node-fpgrowth");
 // Dotenv
 require("dotenv").config();
 
 // Format Time
-const moment = require("moment");
 
 const app = express();
 
@@ -33,64 +31,35 @@ app.use(express.json());
 //HTTP logger
 app.use(morgan("dev"));
 
-// Template engine`
-app.engine(
-    ".hbs",
-    engine({
-        extname: ".hbs",
-        helpers: {
-            sum: (a, b) => a + b,
-            deleteFirstItem: array => {
-                array.splice(0, 1);
-                return array;
-            },
-            create10InputEditImage: array => {
-                let result = "";
-                let string = "";
-                for (let i = 0; i < 10; i++) {
-                    let item = array[i];
-                    if (item) {
-                        string = `<div class="row mb-2 align-items-center">
-                        <div class="col-1">
-                        <img
-                                    src='${item}'
-                                    alt='Ảnh mẫu'
-                                    class='image-swipe border rounded-3'
-                            />
-                        </div>
-                        <div class="col-11 ">
-                                   <input type='text' class='form-control ' placeholder="Images ${
-                                       i + 1
-                                   }"
-                                    name='images' value="${item}"/>
-                        </div>
-                        </div>`;
-                    } else {
-                        string = `
-                        <input type='text' class='form-control mb-2' placeholder="Images ${
-                            i + 1
-                        }" name='images' />
-                        `;
-                    }
-                    result += string;
-                }
-                return result;
-            },
-            formatTime: function (time) {
-                return moment(time).format("DD/MM/YYYY HH:mm:ss");
-            },
-        },
-    }),
-);
-app.set("view engine", ".hbs");
-app.set("views", path.join(__dirname, "resources", "views"));
-
-// Static file path
-app.use(express.static(path.join(__dirname, "public")));
-
 var corsOptions = {
     origin: process.env.CLIENT_ORIGIN || "http://localhost:8081",
 };
+
+// let transactions = [
+//     [1, 3, 4],
+//     [2, 3, 5],
+//     [1, 2, 3, 5],
+//     [2, 5],
+//     [1, 2, 3, 5],
+// ];
+
+// // Execute FPGrowth with a minimum support of 40%. Algorithm is generic.
+// let fpgrowth = new FPGrowth(0.6);
+
+// // Returns itemsets 'as soon as possible' through events.
+// fpgrowth.on("data", itemset => {
+//     // Do something with the frequent itemset.
+//     let support = itemset.support;
+//     let items = itemset.items;
+//     console.log("support: ", support);
+//     console.log("items: ", items);
+// });
+
+// // Execute FPGrowth on a given set of transactions.
+// fpgrowth.exec(transactions).then(itemsets => {
+//     // Returns an array representing the frequent itemsets.
+//     console.log("itemsets: ", itemsets);
+// });
 
 // app.use(cors(corsOptions));
 

@@ -3,22 +3,24 @@ const slug = require("mongoose-slug-updater");
 // const mongoose_delete = require('mongoose-delete');
 
 const Schema = mongoose.Schema;
-const phoneTableName = "phone";
+const produceTableName = "product";
 
-const PhoneSchema = new Schema(
+const ProductSchema = new Schema(
     {
         name: { type: String, required: true },
+        slug: { type: String, slug: "name", unique: true },
         brand: String,
         description: Array,
         prices: Array,
+        price: Number,
         specifications: Array,
         images: Array,
         promotion: { type: Array },
         colors: Array,
         priority: Number,
-        slug: { type: String, slug: "name", unique: true },
         information: String,
         technical_infos: Array,
+        type: String,
     },
     {
         versionKey: false,
@@ -29,6 +31,6 @@ const PhoneSchema = new Schema(
 // Add plugin
 mongoose.plugin(slug);
 
-const PhoneModel = mongoose.model(phoneTableName, PhoneSchema);
+const ProductModel = mongoose.model(produceTableName, ProductSchema);
 
-module.exports = { PhoneModel, phoneTableName };
+module.exports = { ProductModel, produceTableName };

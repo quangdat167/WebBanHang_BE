@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { userTableName } = require("./user");
-const { phoneTableName } = require("./phone");
+const { produceTableName } = require("./product");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
@@ -14,7 +14,7 @@ const OrderSchema = new Schema(
         status: { type: String },
         products: [
             {
-                phoneId: { type: ObjectId, ref: phoneTableName },
+                phoneId: { type: ObjectId, ref: produceTableName },
                 color: { type: String },
                 quantity: { type: Number },
                 type: { type: String },

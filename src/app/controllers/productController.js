@@ -1,120 +1,35 @@
-const { PhoneModel } = require("../models/phone");
-const { monggoseToObject, multipleMongooseToObject } = require("../../util/monggoose");
+const { ProductModel } = require("../models/product");
 const Config = require("../../util/Config");
-// const ConfigPhoneBeforeSave = require('../../public/js/ConfigPhoneBeforeSave');
 
-class PhoneController {
-    // Get API
-
-    // [GET] /api/phones
-    getAll(req, res, next) {
-        PhoneModel.find({})
-            .sort({ priority: -1 })
-            .then(phones => {
-                res.json(phones);
-            })
-            .catch(next);
-    }
-
-    // [GET] /api/phones/:slug
-    async getBySlug(req, res) {
+class ProductController {
+    async getProductBySlug(req, res) {
         try {
-            const phone = await PhoneModel.findOne({ slug: req.body.slug });
-            if (phone) {
-                // console.log(phone);
-                res.status(200).json(phone);
+            const product = await ProductModel.findOne({ slug: req.body.slug });
+            if (product) {
+                res.status(200).json(product);
             } else res.status(200).json({ message: "Invalid phone" });
         } catch (err) {
             console.log(err);
         }
     }
 
-    // Show in backend
-
-    // [GET] /phones/create
-    create(req, res, next) {
-        res.render("phones/create");
-    }
-
-    // [GET] /phones/:slug
-    show(req, res, next) {
-        let firstImage;
-        PhoneModel.findOne({ slug: req.params.slug })
-            .then(phone => {
-                res.render("phones/show", {
-                    phone: monggoseToObject(phone),
-                    firstImage: phone.images[0],
-                });
-            })
-            .catch(next);
-    }
-
-    // [POST] /phones/create
-    store(req, res, next) {
-        const phone = new PhoneModel(req.body);
-        phone
-            .save()
-            .then(() => {
-                res.redirect("/phones/list");
-            })
-            .catch(next);
-    }
-
-    // [GET] /phones/:id/edit
-    edit(req, res, next) {
-        PhoneModel.findById(req.params.id)
-            .then(phone => {
-                res.render("phones/edit", {
-                    phone: monggoseToObject(phone),
-                });
-            })
-            .catch(next);
-    }
-
-    // [PUT] /phones/:id
-    update(req, res, next) {
-        PhoneModel.updateOne({ _id: req.params.id }, req.body)
-            .then(() => {
-                res.redirect("/phones/list");
-            })
-            .catch(next);
-    }
-
-    // [GET] /phones/list
-    read(req, res, next) {
-        PhoneModel.find()
-            .then(phones => {
-                res.render("phones/list", { phones: multipleMongooseToObject(phones) });
-            })
-            .catch(next);
-    }
-
-    // [DELETE] /phones/:id
-    delete(req, res, next) {
-        PhoneModel.deleteOne({ _id: req.params.id })
-            .then(() => {
-                res.redirect("/phones/list");
-            })
-            .catch(next);
-    }
-
     async searchByName(req, res) {
         try {
             const { keyword } = req.body;
-            const phones = await PhoneModel.find({ name: new RegExp(keyword, "i") }).sort({
+            const products = await ProductModel.find({ name: new RegExp(keyword, "i") }).sort({
                 priority: -1,
             });
-            res.status(200).json(phones);
+            res.status(200).json(products);
         } catch (err) {
             console.log(err);
         }
     }
 
-    async getRandomPhone(req, res) {
+    async getRandomProduct(req, res) {
         try {
             const { limit } = req.body;
-            const phones = await PhoneModel.aggregate([{ $sample: { size: parseInt(limit) } }]);
-            res.status(200).json(phones);
+            const products = await ProductModel.aggregate([{ $sample: { size: parseInt(limit) } }]);
+            res.status(200).json(products);
         } catch (err) {
             console.log(err);
         }
@@ -124,8 +39,8 @@ class PhoneController {
         try {
             const { brand, price, type, ram, rom, charging_feature, sortby, skip, limit } =
                 req.body;
-            const totalPhones = await PhoneModel.countDocuments();
-            const pipeline = [];
+            const totalPhones = await ProductModel.countDocuments({ type: "phone" });
+            const pipeline = [{ $match: { type: "phone" } }];
 
             if (type && type.length > 0) {
                 if (type.includes("android") && !type.includes("apple")) {
@@ -268,10 +183,13 @@ class PhoneController {
 
                 pipeline.push(sortPrice);
             }
-            const totalPhone = await PhoneModel.aggregate([...pipeline, { $count: "totalPhone" }]);
+            const totalPhone = await ProductModel.aggregate([
+                ...pipeline,
+                { $count: "totalPhone" },
+            ]);
             pipeline.push({ $skip: skip });
             pipeline.push({ $limit: limit });
-            const result = await PhoneModel.aggregate(pipeline);
+            const result = await ProductModel.aggregate(pipeline);
 
             res.status(200).json({
                 phones: result,
@@ -283,6 +201,32 @@ class PhoneController {
             console.log(err);
         }
     }
+
+    // Items
+    async getProductsItem(req, res) {
+        try {
+            const { limit, skip, sortby, type } = req.body;
+            const pipeline = [{ $match: { type } }];
+            const totalItemsType = await ProductModel.countDocuments({ type });
+            if (sortby === Config.SORT_BY.PRICE_DESC || sortby === Config.SORT_BY.PRICE_ASC) {
+                pipeline.push({
+                    $sort: {
+                        price: sortby === Config.SORT_BY.PRICE_ASC ? 1 : -1,
+                    },
+                });
+            }
+            pipeline.push({ $skip: skip });
+            pipeline.push({ $limit: limit });
+            const backupCharges = await ProductModel.aggregate(pipeline);
+
+            res.status(200).json({
+                data: backupCharges,
+                totalRemaining: totalItemsType - (skip + backupCharges.length),
+            });
+        } catch (err) {
+            console.log(err);
+        }
+    }
 }
 
-module.exports = new PhoneController();
+module.exports = new ProductController();

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const slug = require("mongoose-slug-updater");
 const { userTableName } = require("./user");
-const { phoneTableName } = require("./phone");
+const { produceTableName } = require("./product");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
@@ -14,7 +14,7 @@ const CartSchema = new Schema(
         userId: { type: ObjectId, ref: userTableName },
         products: [
             {
-                phoneId: { type: ObjectId, ref: phoneTableName },
+                phoneId: { type: ObjectId, ref: produceTableName },
                 color: { type: String },
                 quantity: { type: Number },
                 type: { type: String },
@@ -23,6 +23,7 @@ const CartSchema = new Schema(
     },
     {
         versionKey: false,
+        timestamps: true,
     },
 );
 
