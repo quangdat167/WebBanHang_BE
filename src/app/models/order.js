@@ -14,7 +14,7 @@ const OrderSchema = new Schema(
         status: { type: String },
         products: [
             {
-                phoneId: { type: ObjectId, ref: produceTableName },
+                productId: { type: ObjectId, ref: produceTableName },
                 color: { type: String },
                 quantity: { type: Number },
                 type: { type: String },

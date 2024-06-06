@@ -1,6 +1,8 @@
 const { ProductModel } = require("../models/product");
 const Config = require("../../util/Config");
-
+const { FrequentModel } = require("../models/frequent");
+const { mongoose } = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
 class ProductController {
     async getProductBySlug(req, res) {
         try {
@@ -223,6 +225,48 @@ class ProductController {
                 data: backupCharges,
                 totalRemaining: totalItemsType - (skip + backupCharges.length),
             });
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    async getFrequentProduct(req, res) {
+        try {
+            const { productId } = req.body;
+            const frequentItems = await FrequentModel.aggregate([
+                {
+                    $match: { productId: new ObjectId(productId), apply: true },
+                },
+                {
+                    $unwind: "$frequentItems",
+                },
+                {
+                    $lookup: {
+                        from: "products", // Tên collection ProductModel
+                        localField: "frequentItems.itemId",
+                        foreignField: "_id",
+                        as: "frequentItemsDetails",
+                    },
+                },
+                {
+                    $unwind: "$frequentItemsDetails",
+                },
+                {
+                    $group: {
+                        _id: "$_id",
+                        productId: { $first: "$productId" },
+                        algorithm: { $first: "$algorithm" },
+                        frequentItems: {
+                            $push: {
+                                itemId: "$frequentItems.itemId",
+                                support: "$frequentItems.support",
+                                itemDetails: "$frequentItemsDetails",
+                            },
+                        },
+                    },
+                },
+            ]);
+
+            res.status(200).json(frequentItems[0]);
         } catch (err) {
             console.log(err);
         }

@@ -14,7 +14,7 @@ const CartSchema = new Schema(
         userId: { type: ObjectId, ref: userTableName },
         products: [
             {
-                phoneId: { type: ObjectId, ref: produceTableName },
+                productId: { type: ObjectId, ref: produceTableName },
                 color: { type: String },
                 quantity: { type: Number },
                 type: { type: String },

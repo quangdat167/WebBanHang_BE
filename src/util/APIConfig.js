@@ -11,6 +11,7 @@ class APIConfig {
     static SEARCH_PHONE_BY_NAME = "/search-phone-by-name";
     static GET_RANDOM_PRODUCT = "/get-random-product";
     static FILTER_PHONE = "/filter-phone";
+    static GET_FREQUENT_PRODUCTS = "/get-frequent-products";
 
     // Cart
     static ADD_TO_CART = "/add-to-cart";
@@ -21,6 +22,13 @@ class APIConfig {
     static CREATE_ORDER = "/create-order";
     static GET_ALL_ORDERS = "/get-all-orders";
     static GET_ALL_ORDERS_APP = "/get-all-orders-app";
+
+    // Frequent
+    static CALCULATE_FREQUENT_FPGROWTH = "/calculate-frequent-fpgrowth";
+    static CALCULATE_FREQUENT_APRIORI = "/calculate-frequent-apriori";
+    static GET_ALL_FREQUENT = "/get-all-frequent";
+    static APPLY_FPGROWTH = "/apply-fpgrowth";
+    static APPLY_APRIORI = "/apply-apriori";
 }
 
 module.exports = APIConfig;

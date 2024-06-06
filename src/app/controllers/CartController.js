@@ -1,18 +1,18 @@
-const { CartModel } = require("../models/cart");
 const { mongoose } = require("mongoose");
+const { CartModel } = require("../models/cart");
 const ObjectId = mongoose.Types.ObjectId;
 
 class CartController {
     async addToCart(req, res) {
         try {
-            const { userId, phoneId, color, quantity, type } = req.body;
+            const { userId, productId, color, quantity, type } = req.body;
 
             const existingCart = await CartModel.findOne({ userId });
 
             if (existingCart) {
                 const existingProd = existingCart.products.find(product => {
                     return (
-                        product.phoneId.toString() === phoneId &&
+                        product.productId.toString() === productId &&
                         product.type === type &&
                         product.color === color
                     );
@@ -22,7 +22,7 @@ class CartController {
                     existingProd.quantity += 1;
                 } else {
                     existingCart.products.push({
-                        phoneId,
+                        productId,
                         color,
                         quantity,
                         type,
@@ -36,7 +36,7 @@ class CartController {
                     userId,
                     products: [
                         {
-                            phoneId,
+                            productId,
                             color,
                             quantity,
                             type,
@@ -65,10 +65,10 @@ class CartController {
 
                 {
                     $lookup: {
-                        from: "phones",
+                        from: "products",
                         foreignField: "_id",
-                        localField: "products.phoneId",
-                        as: "phoneInfos",
+                        localField: "products.productId",
+                        as: "productInfos",
                     },
                 },
 
@@ -86,12 +86,12 @@ class CartController {
                                                 $arrayElemAt: [
                                                     {
                                                         $filter: {
-                                                            input: "$phoneInfos",
-                                                            as: "phoneInfo",
+                                                            input: "$productInfos",
+                                                            as: "productInfo",
                                                             cond: {
                                                                 $eq: [
-                                                                    "$$phoneInfo._id",
-                                                                    "$$product.phoneId",
+                                                                    "$$productInfo._id",
+                                                                    "$$product.productId",
                                                                 ],
                                                             },
                                                         },
@@ -108,7 +108,7 @@ class CartController {
                 },
                 {
                     $project: {
-                        phoneInfos: 0,
+                        productInfos: 0,
                     },
                 },
             ]);
