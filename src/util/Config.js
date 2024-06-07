@@ -4,6 +4,8 @@ class Config {
 
     static ORDER_STATUS = {
         PENDING: "Chờ xác nhận",
+        NOT_PAID: "Chưa thanh toán",
+        PAID: "Đã thanh toán",
         CONFIRM: "Đã xác nhận",
         SHIPING: "Đang vận chuyển",
         CANCLE: "Đã hủy",

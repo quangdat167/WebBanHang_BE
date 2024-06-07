@@ -21,6 +21,7 @@ const OrderSchema = new Schema(
                 price: { type: Number },
             },
         ],
+        orderCode: Number,
     },
     {
         versionKey: false,

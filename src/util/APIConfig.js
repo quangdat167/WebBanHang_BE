@@ -29,6 +29,9 @@ class APIConfig {
     static GET_ALL_FREQUENT = "/get-all-frequent";
     static APPLY_FPGROWTH = "/apply-fpgrowth";
     static APPLY_APRIORI = "/apply-apriori";
+
+    // Payment
+    static GET_PAYMENT_LINK = "/get-payment-link";
 }
 
 module.exports = APIConfig;

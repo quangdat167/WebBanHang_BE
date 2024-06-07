@@ -7,12 +7,13 @@ const ObjectId = mongoose.Types.ObjectId;
 class OrderController {
     async createOrder(req, res) {
         try {
-            const { userId, products } = req.body;
+            const { userId, products, orderCode } = req.body;
 
             const newOrder = await OrderModel.create({
                 userId,
-                status: Config.ORDER_STATUS.PENDING,
+                status: Config.ORDER_STATUS.NOT_PAID,
                 products,
+                orderCode,
             });
             newOrder.save();
             return res.status(200).json(newOrder);
@@ -35,10 +36,10 @@ class OrderController {
 
                 {
                     $lookup: {
-                        from: "phones",
+                        from: "products",
                         foreignField: "_id",
-                        localField: "products.phoneId",
-                        as: "phoneInfos",
+                        localField: "products.productId",
+                        as: "productInfos",
                     },
                 },
 
@@ -56,12 +57,12 @@ class OrderController {
                                                 $arrayElemAt: [
                                                     {
                                                         $filter: {
-                                                            input: "$phoneInfos",
-                                                            as: "phoneInfo",
+                                                            input: "$productInfos",
+                                                            as: "productInfo",
                                                             cond: {
                                                                 $eq: [
-                                                                    "$$phoneInfo._id",
-                                                                    "$$product.phoneId",
+                                                                    "$$productInfo._id",
+                                                                    "$$product.productId",
                                                                 ],
                                                             },
                                                         },
@@ -78,7 +79,7 @@ class OrderController {
                 },
                 {
                     $project: {
-                        phoneInfos: 0,
+                        productInfos: 0,
                     },
                 },
             ]);
