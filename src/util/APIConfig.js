@@ -6,6 +6,7 @@ class APIConfig {
     static UPDATE_USER_INFO = "/update-user-info";
 
     // products
+    static GET_ALL_PHONES = "/get-all-phones";
     static GET_PRODUCT_BY_SLUG = "/get-product-by-slug";
     static GET_PRODUCT_BY_TYPE = "/get-product-by-type";
     static SEARCH_PHONE_BY_NAME = "/search-phone-by-name";

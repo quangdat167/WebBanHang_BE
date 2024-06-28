@@ -271,6 +271,16 @@ class ProductController {
             console.log(err);
         }
     }
+    async getAllPhones(req, res) {
+        try {
+            const products = await ProductModel.find({ type: "phone" });
+            if (products.length) {
+                res.status(200).json(products);
+            } else res.status(200).json({ message: "Invalid phone" });
+        } catch (err) {
+            console.log(err);
+        }
+    }
 }
 
 module.exports = new ProductController();

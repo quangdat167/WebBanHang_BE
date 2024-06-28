@@ -10,5 +10,6 @@ router.post(APIConfig.SEARCH_PHONE_BY_NAME, productController.searchByName);
 router.post(APIConfig.GET_RANDOM_PRODUCT, productController.getRandomProduct);
 router.post(APIConfig.FILTER_PHONE, productController.filterPhone);
 router.post(APIConfig.GET_FREQUENT_PRODUCTS, productController.getFrequentProduct);
+router.get(APIConfig.GET_ALL_PHONES, productController.getAllPhones);
 
 module.exports = router;

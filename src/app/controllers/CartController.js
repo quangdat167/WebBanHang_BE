@@ -122,11 +122,11 @@ class CartController {
 
     async deleteItemFromCart(req, res) {
         try {
-            const { userId, phoneId } = req.body;
+            const { userId, productId } = req.body;
             const cartInfo = await CartModel.findOne({ userId });
             if (cartInfo) {
                 cartInfo.products = cartInfo.products.filter(product => {
-                    return product.phoneId.toString() !== phoneId;
+                    return product.productId.toString() !== productId;
                 });
 
                 cartInfo.save();
