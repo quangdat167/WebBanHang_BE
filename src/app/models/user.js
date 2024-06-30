@@ -1,11 +1,10 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
-const userTableName = 'userinfo';
+const userTableName = "userinfo";
 
 const UserInfoSchema = new Schema(
     {
-        password: { type: String, required: true },
         email: { type: String, required: true, lowercase: true },
         password: { type: String },
         firstName: { type: String, required: true },

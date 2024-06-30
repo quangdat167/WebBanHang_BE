@@ -2,11 +2,10 @@ const Constants = require("../../util/Constant");
 const { FrequentModel } = require("../models/frequent");
 const { OrderModel } = require("../models/order");
 const { ProductModel } = require("../models/product");
-const { UserInfoModel } = require("../models/user");
 const { FPGrowth } = require("node-fpgrowth");
 const { Apriori } = require("node-apriori");
+
 function filterAndSortItemsetsFPGrowth(itemsets, targetId) {
-    // Lọc các phần tử thỏa mãn điều kiện
     const filtered = itemsets
         .filter(itemset => itemset.items.length === 2 && itemset.items.includes(targetId))
         .map(itemset => {
@@ -16,15 +15,17 @@ function filterAndSortItemsetsFPGrowth(itemsets, targetId) {
                 support: itemset.support,
             };
         });
-
-    // Sắp xếp các phần tử theo support giảm dần
-    filtered.sort((a, b) => b.support - a.support);
+    filtered.sort((a, b) => {
+        if (b.support === a.support) {
+            return a.itemId.localeCompare(b.itemId);
+        }
+        return b.support - a.support;
+    });
 
     return filtered;
 }
 
 function filterAndSortItemsetsApriori(itemsets, targetId) {
-    // Lọc các phần tử thỏa mãn điều kiện
     const filtered = itemsets
         .map(itemset => {
             const item = itemset.items[0];
@@ -36,9 +37,12 @@ function filterAndSortItemsetsApriori(itemsets, targetId) {
             } else return;
         })
         .filter(item => item !== undefined);
-
-    // Sắp xếp các phần tử theo support giảm dần
-    filtered.sort((a, b) => b.support - a.support);
+    filtered.sort((a, b) => {
+        if (b.support === a.support) {
+            return a.itemId.localeCompare(b.itemId);
+        }
+        return b.support - a.support;
+    });
     return filtered;
 }
 
@@ -53,13 +57,13 @@ class FrequentController {
 
     async calculateFrequentFPGrowth(req, res) {
         try {
-            // Step 1: Lấy tất cả các sản phẩm có type là "phone" từ PhoneModel
             const phones = await ProductModel.find({ type: "phone" });
-
             await FrequentModel.updateMany({ algorithm: "Apriori" }, { apply: false });
 
+            console.time("FPGrowth");
+            const initialMemoryUsage = process.memoryUsage().heapUsed;
+
             for (const phone of phones) {
-                // Step 2: Lọc tất cả các đơn hàng mà chứa sản phẩm phone đang xét
                 const ordersContainingPhone = await OrderModel.find({
                     "products.productId": phone._id,
                 });
@@ -68,21 +72,16 @@ class FrequentController {
                         order.products.map(product => product.productId),
                     );
 
-                    // Step 3: Thực hiện tính toán frequent với các đơn hàng thu được từ bước trước, sử dụng thuật toán FPGrowth
                     const fpgrowth = new FPGrowth(Constants.SUPPORT_FREQUENT);
                     const itemsets = await fpgrowth.exec(allOrders);
 
-                    // Step 4: Xóa tất cả các mục hiện có trong FrequentModel liên quan đến sản phẩm phone đang xét
                     await FrequentModel.deleteMany({ productId: phone._id, algorithm: "FPGrowth" });
-
-                    // Step 5: Lưu kết quả tính toán frequent vào bảng FrequentModel
 
                     const frequentItems = filterAndSortItemsetsFPGrowth(
                         itemsets,
                         phone._id.toString(),
                     );
 
-                    // Lưu kết quả vào FrequentModel
                     await FrequentModel.create({
                         productId: phone._id,
                         frequentItems: frequentItems,
@@ -91,7 +90,10 @@ class FrequentController {
                     });
                 }
             }
-            // res.status(200).json({ message: "calculate success" });
+
+            console.timeEnd("FPGrowth");
+            const finalMemoryUsage = process.memoryUsage().heapUsed;
+            console.log(`Memory used: ${(finalMemoryUsage - initialMemoryUsage) / 1024 / 1024} MB`);
         } catch (err) {
             console.log("FPGrowth error: ", err);
             res.status(500).json({ message: "Internal server error" });
@@ -100,12 +102,13 @@ class FrequentController {
 
     async calculateFrequentApriori(req, res) {
         try {
-            // Step 1: Lấy tất cả các sản phẩm có type là "phone" từ PhoneModel
             const phones = await ProductModel.find({ type: "phone" });
             await FrequentModel.updateMany({ algorithm: "FPGrowth" }, { apply: false });
 
+            console.time("Apriori");
+            const initialMemoryUsage = process.memoryUsage().heapUsed;
+
             for (const phone of phones) {
-                // Step 2: Lọc tất cả các đơn hàng mà chứa sản phẩm phone đang xét
                 const ordersContainingPhone = await OrderModel.find({
                     "products.productId": phone._id,
                 });
@@ -114,22 +117,16 @@ class FrequentController {
                         order.products.map(product => product.productId),
                     );
 
-                    // Step 3: Thực hiện tính toán frequent với các đơn hàng thu được từ bước trước, sử dụng thuật toán FPGrowth
                     const apriori = new Apriori(Constants.SUPPORT_FREQUENT);
                     const itemsets = await apriori.exec(allOrders);
 
-                    // Step 4: Xóa tất cả các mục hiện có trong FrequentModel liên quan đến sản phẩm phone đang xét
-
                     await FrequentModel.deleteMany({ productId: phone._id, algorithm: "Apriori" });
-
-                    // Step 5: Lưu kết quả tính toán frequent vào bảng FrequentModel
 
                     const frequentItems = filterAndSortItemsetsApriori(
                         itemsets.itemsets,
                         phone._id.toString(),
                     );
 
-                    // Lưu kết quả vào FrequentModel
                     await FrequentModel.create({
                         productId: phone._id,
                         frequentItems: frequentItems,
@@ -138,9 +135,12 @@ class FrequentController {
                     });
                 }
             }
-            // res.status(200).json({ message: "calculate success" });
+
+            console.timeEnd("Apriori");
+            const finalMemoryUsage = process.memoryUsage().heapUsed;
+            console.log(`Memory used: ${(finalMemoryUsage - initialMemoryUsage) / 1024 / 1024} MB`);
         } catch (err) {
-            console.log("FPGrowth error: ", err);
+            console.log("Apriori error: ", err);
             res.status(500).json({ message: "Internal server error" });
         }
     }
@@ -167,7 +167,7 @@ class FrequentController {
                 },
                 {
                     $lookup: {
-                        from: "products", // Tên collection ProductModel
+                        from: "products",
                         localField: "frequentItems.itemId",
                         foreignField: "_id",
                         as: "frequentItemsDetails",

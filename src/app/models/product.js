@@ -21,6 +21,7 @@ const ProductSchema = new Schema(
         information: String,
         technical_infos: Array,
         type: String,
+        remain: Number,
     },
     {
         versionKey: false,

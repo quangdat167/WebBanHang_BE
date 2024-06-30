@@ -11,5 +11,7 @@ router.post(APIConfig.GET_RANDOM_PRODUCT, productController.getRandomProduct);
 router.post(APIConfig.FILTER_PHONE, productController.filterPhone);
 router.post(APIConfig.GET_FREQUENT_PRODUCTS, productController.getFrequentProduct);
 router.get(APIConfig.GET_ALL_PHONES, productController.getAllPhones);
+router.post(APIConfig.GET_ALL_PRODUCTS, productController.getAllProducts);
+router.post(APIConfig.UPDATE_PRODUCT, productController.updateproduct);
 
 module.exports = router;

@@ -4,6 +4,7 @@ class APIConfig {
     static GET_USER_INFO = "/get-user-info";
     static SEARCH_USER_EMAIL = "/search-user-email";
     static UPDATE_USER_INFO = "/update-user-info";
+    static GET_ALL_USER = "/get-all-users";
 
     // products
     static GET_ALL_PHONES = "/get-all-phones";
@@ -13,6 +14,8 @@ class APIConfig {
     static GET_RANDOM_PRODUCT = "/get-random-product";
     static FILTER_PHONE = "/filter-phone";
     static GET_FREQUENT_PRODUCTS = "/get-frequent-products";
+    static GET_ALL_PRODUCTS = "/get-all-products";
+    static UPDATE_PRODUCT = "/update-product";
 
     // Cart
     static ADD_TO_CART = "/add-to-cart";
